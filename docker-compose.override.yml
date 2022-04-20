@@ -1,0 +1,28 @@
+version: "3.7"
+services:
+    captcha-for-all:
+        container_name: captchaForAllDev
+
+        environment:
+            FORCE_COLOR: 1
+            POSTGRES_USER: captchaForAllDev
+            POSTGRES_PASSWORD: d92GMFUnoF3whCik2KcIOl
+            POSTGRES_DB: captchaForAllDev
+            CAPTCHA_SITEKEY: ${CAPTCHA_SITEKEY-10000000-ffff-ffff-ffff-000000000001}
+            CAPTCHA_SECRET: ${CAPTCHA_SECRET-0x0000000000000000000000000000000000000000}
+
+        volumes:
+            - ./src:/app/src
+
+        ports:
+            - ${INSPECT_PORT-9229}:9229
+            - ${PORT-3300}:80
+
+    postgres:
+        container_name: captchaForAllPostgresDev
+
+        environment:
+            FORCE_COLOR: 1
+            POSTGRES_USER: captchaForAllDev
+            POSTGRES_PASSWORD: d92GMFUnoF3whCik2KcIOl
+            POSTGRES_DB: captchaForAllDev

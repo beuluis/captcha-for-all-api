@@ -1,0 +1,10 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+npm outdated --json | xargs -0 node ./.husky/scripts/packageVersionChecker.js
+
+if ! output="$(npm audit --audit-level=critical)"; then
+  echo "\x1b[41m\x1b[1;97m!!!npm audit has found a critical vulnerability!!!\x1b[0m";
+fi;
+
+make run-test
