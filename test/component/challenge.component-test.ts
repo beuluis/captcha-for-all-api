@@ -158,7 +158,7 @@ describe('Challenge', () => {
                 send: { id: 'shadyid', response: 'verylegigresponse' },
                 expectReturnBody: {
                     statusCode: 400,
-                    message: ['id must be a UUID'],
+                    message: { id: ['isUuid'] },
                     error: 'Bad Request',
                 },
             },
@@ -169,7 +169,7 @@ describe('Challenge', () => {
                 },
                 expectReturnBody: {
                     statusCode: 400,
-                    message: ['response must be a string'],
+                    message: { response: ['isString'] },
                     error: 'Bad Request',
                 },
             },
@@ -177,7 +177,9 @@ describe('Challenge', () => {
                 send: { response: 'verylegigresponse' },
                 expectReturnBody: {
                     statusCode: 400,
-                    message: ['id should not be empty', 'id must be a UUID'],
+                    message: {
+                        id: ['isNotEmpty', 'isUuid'],
+                    },
                     error: 'Bad Request',
                 },
             },
@@ -185,10 +187,7 @@ describe('Challenge', () => {
                 send: { id: '90d3b9c8-7092-44e6-a60d-0dd0f8e94e1d' },
                 expectReturnBody: {
                     statusCode: 400,
-                    message: [
-                        'response should not be empty',
-                        'response must be a string',
-                    ],
+                    message: { response: ['isNotEmpty', 'isString'] },
                     error: 'Bad Request',
                 },
             },
@@ -207,7 +206,7 @@ describe('Challenge', () => {
             });
         });
 
-        it('shouldthrow UnprocessableEntityException if challenge already solved', async () => {
+        it('should throw UnprocessableEntityException if challenge already solved', async () => {
             hCaptchaService.verifyResponse.mockReturnValueOnce(
                 of({
                     success: true,
@@ -345,7 +344,7 @@ describe('Challenge', () => {
 
                         expect(response.body).toEqual({
                             statusCode: 500,
-                            message: 'Internal server error',
+                            message: 'Internal Server Error',
                         });
                     });
             });

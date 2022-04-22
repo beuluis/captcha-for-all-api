@@ -8,7 +8,7 @@ import { Connection, createConnection } from 'typeorm';
 import { SilenceLogger } from './silence-logger';
 import { AppModule } from '../../src/app.module';
 import { Challenge } from '../../src/challenge/challenge.entity';
-import { GlobalExceptionFilter } from '../../src/global-exception.filter';
+import { defaultValidationPipeConfig } from '../../src/validation/validation-pipe.config';
 
 export const bootstrapTestApplication = async (
     override?: (testingModuleBuilder: TestingModuleBuilder) => Promise<void>,
@@ -38,8 +38,7 @@ export const bootstrapTestApplication = async (
         { logger: new SilenceLogger() },
     );
 
-    app.useGlobalFilters(new GlobalExceptionFilter());
-    app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalPipes(new ValidationPipe(defaultValidationPipeConfig));
 
     await app.init();
     await app.getHttpAdapter().getInstance().ready();

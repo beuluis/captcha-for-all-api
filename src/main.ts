@@ -6,7 +6,7 @@ import {
 } from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { GlobalExceptionFilter } from './global-exception.filter';
+import { defaultValidationPipeConfig } from './validation/validation-pipe.config';
 
 async function bootstrap() {
     const app = await NestFactory.create<NestFastifyApplication>(
@@ -14,8 +14,9 @@ async function bootstrap() {
         new FastifyAdapter({ logger: true }),
     );
 
-    app.useGlobalFilters(new GlobalExceptionFilter());
-    app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalPipes(new ValidationPipe(defaultValidationPipeConfig));
+
+    // TODO: helmet
 
     const config = new DocumentBuilder()
         .setTitle('Captcha for all')

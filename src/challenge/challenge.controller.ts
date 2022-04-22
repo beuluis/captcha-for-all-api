@@ -1,8 +1,6 @@
 import {
-    BadRequestException,
     Body,
     ClassSerializerInterceptor,
-    Controller,
     Get,
     InternalServerErrorException,
     Logger,
@@ -14,25 +12,20 @@ import {
     UnprocessableEntityException,
     UseInterceptors,
 } from '@nestjs/common';
-import {
-    ApiCreatedResponse,
-    ApiOperation,
-    ApiResponse,
-    ApiTags,
-} from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ApiException } from '@nanogiants/nestjs-swagger-api-exception-decorator';
+import { EntityNotFoundError } from 'typeorm';
 import { Challenge } from './challenge.entity';
 import { ChallengeService } from './challenge.service';
 import { VerifyChallengeRequestDto } from './dtos/verify-challenge-request.dto';
 import { VerifyChallengeResponseDto } from './dtos/verify-challenge-response.dto';
+import { ChallengeAlreadyVerifiedException } from './exceptions/challenge-already-verified.exception';
 import { GetIP } from '../decorators/get-ip.decorator';
+import { ValidationApiException } from '../decorators/validation-api-exception.decorator';
+import { BaseController } from '../decorators/base-controller.decorator';
 
 // TODO: return error if time is up. Will implement later
-@Controller('challenge')
-@ApiException(() => InternalServerErrorException, {
-    description: 'Unknown error',
-})
-@ApiTags('Challenge')
+@BaseController('challenge', 'Challenge')
 export class ChallengeController {
     private readonly logger = new Logger(ChallengeController.name);
 
@@ -46,7 +39,11 @@ export class ChallengeController {
         type: Challenge,
     })
     async postNewChallenge(): Promise<Challenge> {
-        return this.challengeService.createNewChallenge();
+        try {
+            return await this.challengeService.createNewChallenge();
+        } catch (e: unknown) {
+            throw new InternalServerErrorException();
+        }
     }
 
     @Get('token/:token')
@@ -59,19 +56,26 @@ export class ChallengeController {
     @ApiException(() => NotFoundException, {
         description: 'Challenge was not found',
     })
-    @ApiException(() => BadRequestException, {
-        description: 'Validation failed',
-    })
+    @ValidationApiException()
     async getChallengeByToken(
         @Param('token', new ParseUUIDPipe({ version: '4' })) token: string,
     ): Promise<Challenge> {
-        return this.challengeService.getChallengeByToken(token);
+        try {
+            return await this.challengeService.getChallengeByToken(token);
+        } catch (e: unknown) {
+            if (e instanceof EntityNotFoundError) {
+                throw new NotFoundException(e.message);
+            }
+
+            throw new InternalServerErrorException();
+        }
     }
 
     @Patch('verify')
     @ApiOperation({ summary: 'Verifies a response and solves the challenge' })
-    @ApiException(() => BadRequestException, {
-        description: 'Validation failed',
+    @ValidationApiException()
+    @ApiException(() => NotFoundException, {
+        description: 'Challenge was not found',
     })
     @ApiException(() => UnprocessableEntityException, {
         description: 'Challenge was already verified',
@@ -80,6 +84,19 @@ export class ChallengeController {
         @Body() verifyChallengeDto: VerifyChallengeRequestDto,
         @GetIP() ip: string,
     ): Promise<VerifyChallengeResponseDto> {
-        return this.challengeService.verifyChallenge(verifyChallengeDto, ip);
+        try {
+            return await this.challengeService.verifyChallenge(
+                verifyChallengeDto,
+                ip,
+            );
+        } catch (e: unknown) {
+            if (e instanceof EntityNotFoundError) {
+                throw new NotFoundException(e.message);
+            } else if (e instanceof ChallengeAlreadyVerifiedException) {
+                throw new UnprocessableEntityException(e.message);
+            }
+
+            throw new InternalServerErrorException();
+        }
     }
 }
