@@ -9,6 +9,11 @@ run-test:
 	@npm run test:cov
 	@docker-compose -f docker-compose.test.yml down -v
 
+generate-swagger:
+	@docker-compose -f docker-compose.test.yml up --build -d
+	@npm run swagger:generate
+	@docker-compose -f docker-compose.test.yml down -v
+
 # run test and coverage and log everything
 run-test-verbose:
 	@docker-compose -f docker-compose.test.yml up --build -d

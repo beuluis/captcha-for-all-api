@@ -4,30 +4,16 @@ import {
     NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { Test, TestingModuleBuilder } from '@nestjs/testing';
-import { Connection, createConnection } from 'typeorm';
 import { SilenceLogger } from './silence-logger';
 import { AppModule } from '../../src/app.module';
-import { Challenge } from '../../src/challenge/challenge.entity';
 import { defaultValidationPipeConfig } from '../../src/validation/validation-pipe.config';
 
 export const bootstrapTestApplication = async (
     override?: (testingModuleBuilder: TestingModuleBuilder) => Promise<void>,
 ): Promise<NestFastifyApplication> => {
     const testingModuleBuilder = Test.createTestingModule({
-        imports: [AppModule],
-    })
-        .overrideProvider(Connection)
-        .useValue(
-            await createConnection({
-                type: 'postgres',
-                host: 'localhost',
-                username: 'test',
-                password: 'test',
-                database: 'test',
-                synchronize: true,
-                entities: [Challenge],
-            }),
-        );
+        imports: [AppModule.register(true)],
+    });
 
     if (override) await override(testingModuleBuilder);
 

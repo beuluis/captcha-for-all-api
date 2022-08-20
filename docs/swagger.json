@@ -1,0 +1,483 @@
+{
+    "openapi": "3.0.0",
+    "paths": {
+        "/challenge/create": {
+            "post": {
+                "operationId": "ChallengeController_postNewChallenge",
+                "summary": "Creates a new challenge",
+                "parameters": [],
+                "responses": {
+                    "201": {
+                        "description": "A new challenge was successfully created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Challenge"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "InternalServerErrorException": {
+                                        "description": "Internal Server Error",
+                                        "value": {
+                                            "statusCode": 500,
+                                            "message": "Internal Server Error",
+                                            "error": "Internal Server Error"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "statusCode": {
+                                            "type": "number",
+                                            "example": 500
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Internal Server Error"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Internal Server Error"
+                                        }
+                                    },
+                                    "required": [
+                                        "statusCode",
+                                        "message"
+                                    ]
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "Challenge"
+                ]
+            }
+        },
+        "/challenge/token/{token}": {
+            "get": {
+                "operationId": "ChallengeController_getChallengeByToken",
+                "summary": "Gets a challenge by its token",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Challenge"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "BadRequestException": {
+                                        "description": "Validation failed",
+                                        "value": {
+                                            "statusCode": 400,
+                                            "message": {
+                                                "field": [
+                                                    "isNotEmpty"
+                                                ]
+                                            },
+                                            "error": "Bad Request"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "description": "Validation failed",
+                                    "properties": {
+                                        "statusCode": {
+                                            "type": "number",
+                                            "example": 400
+                                        },
+                                        "message": {
+                                            "type": "object",
+                                            "example": {
+                                                "field": [
+                                                    "isNotEmpty"
+                                                ]
+                                            }
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Bad Request"
+                                        }
+                                    },
+                                    "required": [
+                                        "statusCode",
+                                        "message"
+                                    ]
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "NotFoundException": {
+                                        "description": "Challenge was not found",
+                                        "value": {
+                                            "statusCode": 404,
+                                            "message": "Not Found",
+                                            "error": "Not Found"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "description": "Challenge was not found",
+                                    "properties": {
+                                        "statusCode": {
+                                            "type": "number",
+                                            "example": 404
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Not Found"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Not Found"
+                                        }
+                                    },
+                                    "required": [
+                                        "statusCode",
+                                        "message"
+                                    ]
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "InternalServerErrorException": {
+                                        "description": "Internal Server Error",
+                                        "value": {
+                                            "statusCode": 500,
+                                            "message": "Internal Server Error",
+                                            "error": "Internal Server Error"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "statusCode": {
+                                            "type": "number",
+                                            "example": 500
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Internal Server Error"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Internal Server Error"
+                                        }
+                                    },
+                                    "required": [
+                                        "statusCode",
+                                        "message"
+                                    ]
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "Challenge"
+                ]
+            }
+        },
+        "/challenge/verify": {
+            "patch": {
+                "operationId": "ChallengeController_patchVerifyChallenge",
+                "summary": "Verifies a response and solves the challenge",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VerifyChallengeRequestDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "BadRequestException": {
+                                        "description": "Validation failed",
+                                        "value": {
+                                            "statusCode": 400,
+                                            "message": {
+                                                "field": [
+                                                    "isNotEmpty"
+                                                ]
+                                            },
+                                            "error": "Bad Request"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "description": "Validation failed",
+                                    "properties": {
+                                        "statusCode": {
+                                            "type": "number",
+                                            "example": 400
+                                        },
+                                        "message": {
+                                            "type": "object",
+                                            "example": {
+                                                "field": [
+                                                    "isNotEmpty"
+                                                ]
+                                            }
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Bad Request"
+                                        }
+                                    },
+                                    "required": [
+                                        "statusCode",
+                                        "message"
+                                    ]
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "NotFoundException": {
+                                        "description": "Challenge was not found",
+                                        "value": {
+                                            "statusCode": 404,
+                                            "message": "Not Found",
+                                            "error": "Not Found"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "description": "Challenge was not found",
+                                    "properties": {
+                                        "statusCode": {
+                                            "type": "number",
+                                            "example": 404
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Not Found"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Not Found"
+                                        }
+                                    },
+                                    "required": [
+                                        "statusCode",
+                                        "message"
+                                    ]
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "422": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "UnprocessableEntityException": {
+                                        "description": "Challenge was already verified",
+                                        "value": {
+                                            "statusCode": 422,
+                                            "message": "Unprocessable Entity",
+                                            "error": "Unprocessable Entity"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "description": "Challenge was already verified",
+                                    "properties": {
+                                        "statusCode": {
+                                            "type": "number",
+                                            "example": 422
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unprocessable Entity"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unprocessable Entity"
+                                        }
+                                    },
+                                    "required": [
+                                        "statusCode",
+                                        "message"
+                                    ]
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "InternalServerErrorException": {
+                                        "description": "Internal Server Error",
+                                        "value": {
+                                            "statusCode": 500,
+                                            "message": "Internal Server Error",
+                                            "error": "Internal Server Error"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "statusCode": {
+                                            "type": "number",
+                                            "example": 500
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Internal Server Error"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Internal Server Error"
+                                        }
+                                    },
+                                    "required": [
+                                        "statusCode",
+                                        "message"
+                                    ]
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "Challenge"
+                ]
+            }
+        }
+    },
+    "info": {
+        "title": "captcha-for-all-api",
+        "description": "Brings captcha to everywhere",
+        "version": "0.0.1",
+        "contact": {}
+    },
+    "tags": [],
+    "servers": [],
+    "components": {
+        "schemas": {
+            "Challenge": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "5568e476-3431-4f29-bfd6-fca460d0c971"
+                    },
+                    "token": {
+                        "type": "string",
+                        "example": "b6e8daf6-9b4d-4ddb-8e88-0c62821c1243"
+                    },
+                    "state": {
+                        "type": "string",
+                        "example": "pending"
+                    },
+                    "errors": {
+                        "type": "array",
+                        "example": [
+                            "bad-request",
+                            "invalid-input-response",
+                            "invalid-input-response",
+                            "invalid-or-already-seen-response",
+                            "missing-input-response",
+                            "missing-input-secret",
+                            "not-using-dummy-passcode",
+                            "sitekey-secret-mismatch"
+                        ],
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "missing-input-secret",
+                                "invalid-input-secret",
+                                "missing-input-response",
+                                "invalid-input-response",
+                                "bad-request",
+                                "invalid-or-already-seen-response",
+                                "not-using-dummy-passcode",
+                                "sitekey-secret-mismatch"
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "id",
+                    "token",
+                    "state",
+                    "errors"
+                ]
+            },
+            "VerifyChallengeRequestDto": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "5568e476-3431-4f29-bfd6-fca460d0c971"
+                    },
+                    "response": {
+                        "type": "string",
+                        "example": "20000000-aaaa-bbbb-cccc-000000000002"
+                    }
+                },
+                "required": [
+                    "id",
+                    "response"
+                ]
+            }
+        }
+    }
+}

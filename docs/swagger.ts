@@ -1,23 +1,20 @@
-import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import {
     FastifyAdapter,
     NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AppModule } from './app.module';
-import { defaultValidationPipeConfig } from './validation/validation-pipe.config';
+import { writeFile } from 'fs';
+import { join } from 'path';
+import { promisify } from 'util';
 import { version, name, description } from '../package.json';
+import { AppModule } from '../src/app.module';
 
-async function bootstrap() {
+async function writeSwaggerDocs() {
     const app = await NestFactory.create<NestFastifyApplication>(
-        AppModule.register(),
+        AppModule.register(true),
         new FastifyAdapter({ logger: true }),
     );
-
-    app.useGlobalPipes(new ValidationPipe(defaultValidationPipeConfig));
-
-    // TODO: helmet
 
     const config = new DocumentBuilder()
         .setTitle(name)
@@ -26,8 +23,12 @@ async function bootstrap() {
         .build();
 
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api', app, document);
 
-    await app.listen(80, '0.0.0.0');
+    const promisifiedWriteFile = promisify(writeFile);
+    await promisifiedWriteFile(
+        join(__dirname, 'swagger.json'),
+        JSON.stringify(document, null, 4),
+    );
+    await app.close();
 }
-bootstrap();
+writeSwaggerDocs();

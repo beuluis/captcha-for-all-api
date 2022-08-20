@@ -74,6 +74,7 @@ touch .env
 ## Endpoint dokumentation
 
 The endpoints are documented in swagger. You can navigate to swagger on your local instance, like `localhost:{your port}/api`.
+Or view them [here](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/beuluis/captcha-for-all-api/main/docs/swagger.json).
 
 <!-- CONTRIBUTING -->
 

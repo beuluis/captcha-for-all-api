@@ -21,7 +21,8 @@
         "test": "jest",
         "test:cov": "jest --coverage",
         "prepare": "husky install",
-        "lintstaged": "lint-staged"
+        "lintstaged": "lint-staged",
+        "swagger:generate": "ts-node ./docs/swagger.ts"
     },
     "dependencies": {
         "@nanogiants/nestjs-swagger-api-exception-decorator": "^1.6.0",
